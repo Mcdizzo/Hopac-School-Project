@@ -1,0 +1,115 @@
+body{
+    background: url('../images/img5.JPG') no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+}
+form{
+    border: 5px inset gold;
+    padding: 30px;
+    background: linear-gradient(to right,rgb(245, 245, 245, 0.6), rgb(245, 222, 179, 0.7));
+}
+.question_set{
+    border: 3px outset  goldenrod;
+    padding: 0 0 0 5px;
+    background-color: rgb(245, 245, 245, 0.8)
+}
+p{
+    font-size: 17px;
+}
+h1, p{
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+textarea{
+    border: 4px inset;
+    border-left: 4px inset blue;
+    height: 150px;
+    width: 450px;
+    font-size: medium;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+input[type='text']{
+    border: 2px inset wheat;
+    height: 30px;
+    width: 450px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 18px;
+}
+select{
+    border: 2px inset wheat;
+    height: 30px;
+    width:  180px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 17px;
+    text-transform: capitalize;   
+}
+
+label{
+    text-transform: capitalize;
+    font-size: large;
+}
+.radio_button{
+    list-style: none;
+    display: flex;
+}
+
+input[type='radio']{
+    display: none;
+
+}
+
+.radio_button label{
+    display: flex;
+    margin-right: 100px;
+    border: 2px outset wheat;
+    padding: 20px;
+    border-radius: 50px;
+    color: blue;
+    background-color: white;
+    cursor: pointer;
+    font-size: large;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.radio:hover{
+    background-color: slateblue;
+}
+
+input[type="radio"]:checked + label{
+    border: 2px inset wheat;
+    background-color: lightgoldenrodyellow;
+    color: blue;
+}
+button{
+    border: 3px outset  goldenrod;
+    background-color: lightgoldenrodyellow;
+    color: blue;
+    padding: 10px;
+    font-size: 15px;
+    float: right;
+}
+
+.button{
+    border: 3px outset  goldenrod;
+    background-color: lightgoldenrodyellow;
+    color: blue;
+    padding: 10px;
+    font-size: 15px;
+    margin: 0 0 0 0 ;
+}
+
+a button:active{
+    transform: scale(0.9);
+}
+
+.button:active{
+    transform: scale(0.9);
+}
+
+
+a{
+    text-decoration: none;
+}
