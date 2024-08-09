@@ -1,0 +1,179 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/loginpage.css')}}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container" id="main">
+    <div class="sign-up">
+        <form id="firstForm" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <h1>Create Account</h1><br>
+            {{form.full_name (placeholder="Fullname")}}
+            {{form.id (placeholder="Your ID")}}
+            {{form.email (placeholder="eg.msindato@hopac.sc.tz")}}
+
+            <!-- <select id="title" name='user_type' onchange="changestatus()" class="jobtitle">-->
+                {{form.user_type (class_="jobtitle", id="title", onchange="changestatus()", placeholder="User-type")}}
+            <!--<select id="title2" class="jobtitle title2" name='spv_position' >-->
+                {{form.spv_position (class_="jobtitle title2", id="title2")}}
+            <!--<select id="title3" class="jobtitle title3" name='staff_job' >-->
+                {{form.staff_job(class_="jobtitle title3", id="title3")}}
+            <button type="button" id="nextButton" onclick="nextPage()">Next</button>
+        </form>
+    </div>
+    <div class="sign-in">
+        <form action="/login" method="POST">
+            <h1>Sign In</h1>
+            <input type="text" name='usrId' placeholder="1234" required="">
+            <input type="password" name='pswd' placeholder="password" required="">
+            <a href="">forgot your password?</a>
+            <button type="submit">Sign In</button>
+            <p id='message'></p>
+            <p id='error-message'></p>
+        </form>
+</div>
+<div class="overlay-container">
+    <div class="overlay">
+    <div class="overlay-left">
+        <h1>Welcome Back!</h1>
+        <p>If you already have an account please login with your account info</p>
+        <button id="signIn">Sign In</button>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay-right">
+            <h1>Hello, first time? </h1>
+            <p>Enter your pesonal details to get started</p>
+            <button id="signUp">Sign Up</button>
+        </div>
+        </div>
+    </div>
+</div>
+<div class="cover-container">
+ <form id="secondForm" action="/signup" method="POST" enctype="multipart/form-data">
+    <div class="coveritems">
+    <h2>Please fill in the details below:</h2>
+    
+<div class="inputbox">
+    {{ form.password.label }}<i class="fa-solid fa-lock"></i>
+    {{ form.password }}
+</div>
+<div class="inputbox">
+    {{ form.period.label }}<i class="fa-solid fa-clock"></i>
+    {{ form.period }}
+</div>
+<div class="inputbox">
+    {{ form.re_pswd.label }}
+    {{ form.re_pswd }}
+</div>
+<div class="inputbox">
+    {{ form.picture.label }}
+    {{ form.picture }}
+</div>
+    <div class="inputbox">
+   {{form.contact.label}}<i class="fa-solid fa-phone"></i>
+    {{form.contact}}
+</div>
+    <button  type="button" onclick="prevPage()">Back</button>
+    <button type="submit" >Sign Up</button>
+    </div>
+</form>
+</div>
+<script type="text/javascript">
+    const status = document.getElementById('title');
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const main = document.getElementById('main');
+    
+
+    signUpButton.addEventListener('click', () => {
+        main.classList.add("right-panel-active");
+    });
+    signInButton.addEventListener('click', () => {
+        main.classList.remove("right-panel-active");
+    });
+    function nextPage(){
+        main.classList.add("bottom-panel-active");
+       event.preventDefault();
+    };
+    function prevPage(){
+        main.classList.remove("bottom-panel-active");
+    };
+
+    function changestatus() {
+if (status.value == 'Supervisor') {
+document.getElementById('title2').classList.remove('hidden');
+document.getElementById('title3').classList.add('hidden');
+document.getElementById('Sname').classList.add('hidden');
+} else if (status.value == 'Staff') {
+document.getElementById('title2').classList.add('hidden');
+document.getElementById('title3').classList.remove('hidden');
+
+
+}
+};
+
+// New function to handle form navigation and data transfer
+document.getElementById('nextButton').addEventListener('click', function() {
+var formData = new FormData(document.getElementById('firstForm'));
+var secondForm = document.getElementById('secondForm');
+for (var pair of formData.entries()) {
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = pair[0];
+    input.value = pair[1];
+    secondForm.appendChild(input);
+}
+main.classList.add('bottom-panel-active');
+});
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (decodeURIComponent(pair[0]) == variable) {
+            return decodeURIComponent(pair[1]);
+        }
+    }
+    console.log('Query variable %s not found', variable);
+}
+
+// Function to display message on the page
+// Function to extract query parameters from URL
+function getQueryVariable(variable) {
+var query = window.location.search.substring(1);
+var vars = query.split('&');
+for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=');
+    if (decodeURIComponent(pair[0]) == variable) {
+        return decodeURIComponent(pair[1].replace(/\+/g, ' '));
+    }
+}
+console.log('Query variable %s not found', variable);
+}
+
+// Function to display message on the page
+function displayMessage() {
+var message = getQueryVariable('message');
+if (message) {
+    // Append the message to an existing element on the page with id="message"
+    var messageElement = document.getElementById('message');
+    if (messageElement) {
+        messageElement.textContent = message;
+    } else {
+        console.log('Element with id="message" not found');
+    }
+
+ var newUrl = window.location.pathname; // Get the current path
+window.history.replaceState({}, document.title, newUrl);
+
+}
+}
+
+// Call displayMessage function when the page loads
+window.onload = displayMessage;
+
+</script>
+
+{% endblock content %}

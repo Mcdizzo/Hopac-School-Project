@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/homepage.css')}}">
+{% endblock %}
+{% block content %}
+
+<nav class="nav1">
+    <img id="school_logo" src="../static/images/hopac logo.jpg" alt="school logo">
+    <h1> Perfomance feedback and goal setting</h1>
+    <input type="checkbox" id="check">
+    <label for="check" class="menu">
+    <i class="fa-solid fa-bars"></i>
+    </label>
+</nav>
+
+
+<div class="menu_list" id="menuList">
+    <ul>
+        <li><a href="{{ url_for( 'main.logout' ) }}">Logout</a></li>
+        <li><a href="{{ url_for( 'main.logout' ) }}">Item 1</a></li>
+        <li><a href="{{ url_for( 'main.logout' ) }}">Item 2</a></li>
+        <li><a href="{{ url_for( 'main.logout' ) }}">Item 3</a></li>
+        <li><a href="{{ url_for( 'main.logout' ) }}">Item 4</a></li>
+    </ul>
+</div>
+<div id="massage"> 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+            {% for category, message in messages %}
+                    {{ message }}
+            {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+
+
+<div class="container" id="main">
+   
+    <nav class="nav2">
+        <ul>
+            <li><button class="navButtons" id="profile">Profile</button></li>
+            <li><button class="navButtons" id="evaluation_form">Evaluation Form</button></li>
+            <li><button class="navButtons" id="admin_panel">Admin Panel</button></li>
+            <li><button class="navButtons" id="dashboard">Dashboard</button></li>
+            <li><button class="navButtons" id="help_center">Help center</button></li>
+        </ul>
+    </nav>
+    <div class="profile">
+        <div class="passport">
+            {% if user.picture %}
+            <img src="data:image/jpeg;base64,{{ user.picture|b64encode }}" alt="Profile Picture" >
+            {% else %}
+            <h5>No profile picture uploaded</h5>
+            {% endif %}
+        </div>
+        <div class="usr_description">
+          <p class="label">Name</p>
+          <p class="usr_info" id="usr_name">{{ user.full_name }}</p><br>
+          <p class="label">Position</p>
+          <p class="usr_info" id="usr_pstn">{{ user.user_type }}</p><br>
+          <p class="label">Jobtitle</p>
+          <p class="usr_info" id="usr_jobtitle">{{ jobtitle }}</p><br>
+       </div>
+  </div>
+    <div class="evaluation_form">
+        <div class="in_descriptions">
+        <h3> For Staff press the button to start filling your evaluation form</h3>
+        <a href="{{ url_for( 'main.questions_view') }}"> <button class="min_button">Go to form</button></a>
+        </div>
+        <div class="in_descriptions">
+            <h3>For supervisors press the button to review and give your feedback to forms</h3>
+            <a href="{{ url_for( 'main.review_form_list') }}"><button class ="min_button">Give feedback to forms</button></a>
+        </div>
+    </div>
+    
+    <div class="admin_panel" id="admin">
+        <div class="in_descriptions">
+        <h3>Set this years questions</h3>
+        <a href="{{ url_for( 'main.add_question') }}"><button class='min_button' type="button">Set questions</button></a>
+        </div>
+        <div class="in_descriptions">
+        <h3>Give administrative authority</h3>
+        <a href = "{{ url_for( 'main.add_admin') }}"><button class='min_button' id="admin_add_button">Add administrator</button></a>
+        <h3>Preview set questions</h3>
+        <a href = "{{ url_for( 'main.form_preview') }}"><button class='min_button' id="preview_button">Preview questions</button></a>
+        </div>
+    </div>
+    <div class="dashboard"></div>
+    <div class="help_center"></div>
+</div>
+
+
+<script>
+
+    const main = document.getElementById('main');
+    const dashboardButton = document.getElementById('dashboard');
+    const evaluationButton = document.getElementById('evaluation_form');
+    const adminButton = document.getElementById('admin_panel');
+    const profileButton = document.getElementById('profile');
+    const helpButton = document.getElementById('help_center');
+
+
+    dashboardButton.addEventListener('click', () => {
+        main.classList.remove("evaluationform_active");
+        main.classList.remove("adminpanel_active");
+        main.classList.remove("helpcenter_active");
+        main.classList.add("dashboard_active");
+    });
+    evaluationButton.addEventListener('click', () => {
+        main.classList.remove("adminpanel_active");
+        main.classList.remove("dashboard_active");
+        main.classList.remove("helpcenter_active");
+        main.classList.add("evaluationform_active");
+    });
+    adminButton.addEventListener('click', () => {
+        main.classList.remove("evaluationform_active");
+        main.classList.remove("dashboard_active");
+        main.classList.remove("helpcenter_active");
+        main.classList.add("adminpanel_active");
+    });
+    profileButton.addEventListener('click', () => {
+        main.classList.remove("evaluationform_active");
+        main.classList.remove("adminpanel_active");
+        main.classList.remove("helpcenter_active");
+        main.classList.remove("dashboard_active");
+    });
+    helpButton.addEventListener('click', () => {
+        main.classList.remove("evaluationform_active");
+        main.classList.remove("adminpanel_active");
+        main.classList.remove("dashboard_active");
+        main.classList.add("helpcenter_active");
+    });
+
+    document.getElementById('check').addEventListener('change', function() {
+        var menuList = document.getElementById('menuList');
+        if (this.checked) {
+        menuList.style.transform = 'translateX(0)';
+        } else {
+        menuList.style.transform = 'translateX(100%)';
+        }
+    });
+
+// This is to control the administrators panel actions when adding an admin
+    const add_adminButton = document.getElementById('admin_add_button');
+    const return_from_newAdminButton = document.getElementById('return_from_newAdmin');
+
+    add_adminButton.addEventListener('click', () => {
+        adminpanel.classList.add("adding_admin");
+    });
+    return_from_newAdminButton.addEventListener('click', () => {
+        adminpanel.classList.remove("adding_admin");
+    });
+
+   
+</script>
+
+{% endblock content %}

@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/forms2.css')}}">
+{% endblock %}
+{% block content %}
+<form method="POST" action= "{{ url_for( 'main.add_admin') }}" >
+    {{ form.hidden_tag() }}
+
+   <h1> Manage Administrators </h1>
+
+   <div id="massage"> 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="flash-messages">
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+    </div>
+
+   {{ form.new_admin_email.label}}<br>
+   {{ form.new_admin_email }}<br>
+   <br>
+   {{ form.add_admin  (class="button")  }}   {{ form.remove_admin  (class="button")  }}<br>
+<br>
+    <a href = "{{ url_for( 'main.home_return') }}"><button type="button">Back</button></a>
+</form>
+{% endblock content %}

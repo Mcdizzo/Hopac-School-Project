@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/forms.css')}}">
+{% endblock %}
+{% block content %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <form method="POST">
+        <h1>Add Questions</h1>
+        {{ form.hidden_tag() }}
+        {% for set_form in form.question_sets %}
+            <div class="question-set">
+                    <div class="set-title">
+                        {{ set_form.question_title.label }}<br>
+                        {{ set_form.question_title (class="text_inputs") }}
+                    </div>
+                    <br>  
+                <div class="questions">
+                    {% for question_form in set_form.questions %}
+                        <div class="question">
+                            {{ question_form.hidden_tag() }}
+                            {{ question_form.question_type.label }}<br>
+                            {{ question_form.question_type (class="text_inputs")}}<br>
+                            <br>
+                            {{ question_form.question_text.label }}<br>
+                            {{ question_form.question_text }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <br>
+                {{ set_form.add_question (class="button") }}
+            </div>
+        {% endfor %}
+        {{ form.add_question_set (class="button") }}<br>
+        {{ form.submit (class="button") }}
+        <a href = "{{ url_for( 'main.home_return') }}"><button type="button">Back</button></a>
+    </form>
+{% endblock content %}

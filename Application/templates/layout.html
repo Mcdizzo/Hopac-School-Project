@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if title %}
+    <title>Hopacweb - {{title}}</title>
+    {% else %}
+    <title> Hopacweb</title>
+    {% endif %}
+    {% block css %}{% endblock %}
+    <script src="https://kit.fontawesome.com/395a842d27.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>

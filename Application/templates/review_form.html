@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/forms.css')}}">
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('main.review_form', staff_id=staff_member.user_id) }}">
+    {{ form.hidden_tag() }}
+    <div class="owner_title">
+        <p>This form was filled by {{staff_member.full_name}}</p>
+    </div>
+    {% set printed_titles = [] %}
+    {% for question in question_data %}
+        {% if question[0] not in printed_titles %}
+            <h1>{{ question[0] }}</h1>
+            {% set _ = printed_titles.append(question[0]) %}
+        {% endif %}
+        
+        <div class="question_set">
+            <p>{{ question[3] }}</p>
+            {% if question[4] == 'text' %}
+              {% for response in staff_response %}
+                {% if response.question_id == question[1] %}
+                    <p>{{response.response_text}}</p>
+                {% endif %}
+               {% endfor %}
+            {% else %}
+            <p> Self evaluation</p>
+                {% for response in staff_response %}
+                    {% if response.question_id == question[1] %}
+                        <p>I evaluate myself to be {{response.response_rating}} at my perfomance</p>
+            <p> Comment:</p>
+                        <p>{{response.comment}}</p>
+                    {% endif %}
+                {% endfor %}
+            <p>Supervisor's evaluation</p>
+                {{ form['admin_scale_' ~ question[1]] (class="radio_button") }}
+            <p> Comment:</p>
+                {{ form['admin_comment_' ~ question[1]] }}
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {{ form.submit (class="button") }}
+    <a href = "{{ url_for( 'main.home_return') }}"><button type="button">Back</button></a>
+</form>
+{% endblock content %}

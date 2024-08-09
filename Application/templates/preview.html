@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/forms.css')}}">
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('main.form_preview') }}">
+    {{ form.hidden_tag() }}
+
+    {% set printed_titles = [] %}
+    {% for question in question_data %}
+        {% if question[0] not in printed_titles %}
+            <h1>{{ question[0] }}</h1>
+            {% set _ = printed_titles.append(question[0]) %}
+        {% endif %}
+        <div class="question_set">
+            <a href="{{ url_for('main.remove_question', question_id = question[1]) }}"><button type="button">Remove Question</button></a>
+            <p>{{ question[3] }}</p>           
+            {% if question[4] == 'text' %}
+
+                {{ form['staff_response_' ~ question[1]] (readonly=True)}}
+                
+            {% else %}
+            <p> Self evaluation</p>
+
+                {{ form['staff_scale_' ~ question[1]] (class="radio_button", readonly=True) }}
+
+            <p> Comment</p>
+
+                {{ form['staff_comment_' ~ question[1]] (readonly=True) }}
+            
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {{ form.submit (class="button") }}
+    <a href = "{{ url_for( 'main.home_return') }}"><button type="button">Back</button></a>
+</form>
+{% endblock content %}

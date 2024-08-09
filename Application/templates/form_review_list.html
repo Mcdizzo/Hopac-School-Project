@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/review.css')}}">
+{% endblock %}
+
+{% block content %}
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Staff Name</th>
+        <th>Review Status</th>
+    </tr>
+    {% if position == "Operational Manager"%}
+        {% for staff in staffs %}
+          {% for user in staff_user %}
+             {% if user.user_id == staff.staff_id and staff.job_position == "Staff 1" %}
+    <tr>
+        <td>{{ staff.staff_id }}</td>
+        <td><a href="{{ url_for('main.review_form', staff_id=staff.staff_id) }}">{{ user.full_name}}</a></td>
+        <td> radio review</td>
+    </tr>
+             {% endif %}
+         {% endfor %}   
+        {% endfor %}
+
+    {% elif position == "Principal"%}
+        {% for staff in staffs %}
+          {% for user in staff_user %}
+             {% if staff.job_position == "Staff 2" and user.user_id == staff.staff_id %}
+    <tr>
+        <td>{{ staff.staff_id }}</td>
+        <td><a href="{{url_for('main.review_form', staff_id=staff.staff_id)}}">{{ user.full_name}}</a></td>
+        <td> radio review</td>
+    </tr>
+             {% endif %}
+         {% endfor %}   
+        {% endfor %}
+
+    {% elif position == "Director"%}
+        {% for staff in staffs %}
+          {% for user in staff_user %}
+             {% if staff.job_position == "Staff 3" and user.user_id == staff.staff_id %}
+    <tr>
+        <td>{{ staff.staff_id }}</td>
+        <td><a href="{{url_for('main.review_form', staff_id=staff.staff_id)}}">{{ user.full_name}}</a></td>
+        <td> radio review</td>
+    </tr>
+             {% endif %}
+         {% endfor %}   
+        {% endfor %}
+
+
+    {% endif %}
+
+</table>
+<a href = "{{ url_for( 'main.home_return') }}"><button type="button">Back</button></a>
+
+
+
+{% endblock content%}
