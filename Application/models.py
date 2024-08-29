@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 #from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from __init__ import db
-
+# this is a test to see if the git worked
 class users (db.Model):
     user_id = db.Column(db.Integer, primary_key=True, nullable=False)
     full_name = db.Column(db.String(20), nullable=False)
