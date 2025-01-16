@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/forms2.css')}}">
+<style>
+.question_set{
+    justify-items: center;
+    margin: 0 0 10px 0;
+    padding: 10px;
+}
+select{
+    height: auto;
+}
+.form-group select {
+        display: none;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<form method="POST" action= "{{ url_for( 'main.create_database') }}" >
+    {{ form.hidden_tag() }}
+            
+    <!-- Year input field -->
+    <div class="form-group">
+        <label for="year">Year</label>
+        {{ form.year(class="form-control") }}
+    </div>
+    
+    <!-- Multi-select for table selection -->
+    <div class="form-group">
+        <label for="tables_to_retain">Select Tables to Retain Data</label>
+        {{ form.tables_to_retain(class="form-control", multiple="multiple") }}
+    </div>
+    
+    
+    <!-- Submit button -->
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+<a href = "{{ url_for( 'main.manage_database') }}"><button type="button" >Back</button></a>
+<div id="massage"> 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+            {% for category, message in messages %}
+                    {{ message }}
+            {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+
+{% endblock content %}

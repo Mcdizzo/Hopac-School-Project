@@ -65,13 +65,19 @@
   </div>
     <div class="evaluation_form">
         <div class="in_descriptions">
-        <h3> For Staff press the button to start filling your evaluation form</h3>
+        <h3> Press the button to start filling your evaluation form</h3>
         <a href="{{ url_for( 'main.questions_view') }}"> <button class="min_button">Go to form</button></a>
         </div>
         <div class="in_descriptions">
-            <h3>For supervisors press the button to review and give your feedback to forms</h3>
+            <h3> Press the button to check the review for your form</h3>
+            <a href="{{ url_for( 'main.staff_form_review', staff_id=user.user_id) }}"> <button class="min_button">Check form</button></a>
+            </div>
+        {% if user.user_type == 'Supervisor' %}
+        <div class="in_descriptions">
+            <h3>Press the button to review and give your feedback to forms</h3>
             <a href="{{ url_for( 'main.review_form_list') }}"><button class ="min_button">Give feedback to forms</button></a>
         </div>
+        {% endif %}
     </div>
     
     <div class="admin_panel" id="admin">
@@ -82,12 +88,19 @@
         <div class="in_descriptions">
         <h3>Give administrative authority</h3>
         <a href = "{{ url_for( 'main.add_admin') }}"><button class='min_button' id="admin_add_button">Add administrator</button></a>
+        </div>
+        <div class="in_descriptions">
         <h3>Preview set questions</h3>
         <a href = "{{ url_for( 'main.form_preview') }}"><button class='min_button' id="preview_button">Preview questions</button></a>
-        </div>
+         </div>
+         <div class="in_descriptions">
+        <h3>Manage Database</h3>
+        <a href = "{{ url_for( 'main.manage_database') }}"><button class='min_button' id="preview_button">Manage Database</button></a>
+         </div>
     </div>
     <div class="dashboard"></div>
     <div class="help_center"></div>
+
 </div>
 
 

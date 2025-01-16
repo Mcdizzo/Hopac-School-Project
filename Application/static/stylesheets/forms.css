@@ -123,3 +123,19 @@ a button:active{
 a{
     text-decoration: none;
 }
+.flash-messages{
+    border-radius: 10px;
+    background: linear-gradient(to right,rgb(21, 171, 5), rgb(13, 242, 51));
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: white;
+    box-shadow: 0 8px 8px rgba(69, 88, 213, 0.789),
+                0 6px 6px rgb(6, 54, 130);
+    font-size: 18px;
+    padding: 20px;
+    display: none
+}
+
+.flash-messages:not(:empty) {
+    display: block;
+    animation: fade 5s ease-in-out;
+}

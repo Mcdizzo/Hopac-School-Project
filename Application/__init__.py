@@ -9,7 +9,7 @@ mail = Mail()
 def create_app():
     app = Flask(__name__, static_url_path="/static", static_folder="static")
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:62645526@localhost:3306/hopacDBS'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:62645526@localhost:3306/hopacdbms'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.secret_key = 't83nf9KG*&@!orjy6&5%' 
 
@@ -36,3 +36,5 @@ def create_app():
 
     
     return app
+
+app = create_app()

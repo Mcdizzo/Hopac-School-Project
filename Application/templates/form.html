@@ -14,12 +14,18 @@
             {% set _ = printed_titles.append(question[0]) %}
         {% endif %}
         <div class="question_set">
-            <p>{{ question[3] }}</p>
-            {% if question[4] == 'text' %}
+            <p>{{ question[2] }}</p>
+
+            {% if question[3] == 'text' %}
+
                 {{ form['staff_response_' ~ question[1]] }}
+
             {% else %}
+
             <p> Self evaluation</p>
+
                 {{ form['staff_scale_' ~ question[1]] (class="radio_button") }}
+                
             <p> Comment</p>
                 {{ form['staff_comment_' ~ question[1]]  }}
             

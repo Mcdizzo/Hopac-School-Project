@@ -1,7 +1,7 @@
 from __init__ import create_app
 import base64
-app = create_app()
 
+app = create_app()
 #custom function for uploaded images
 
 @app.template_filter('b64encode')

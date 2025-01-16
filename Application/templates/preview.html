@@ -15,17 +15,17 @@
         {% endif %}
         <div class="question_set">
             <a href="{{ url_for('main.remove_question', question_id = question[1]) }}"><button type="button">Remove Question</button></a>
-            <p>{{ question[3] }}</p>           
-            {% if question[4] == 'text' %}
+            <p>{{ question[2] }}</p>           
+            {% if question[3] == 'text' %}
 
                 {{ form['staff_response_' ~ question[1]] (readonly=True)}}
                 
             {% else %}
-            <p> Self evaluation</p>
+               <p> Self evaluation</p>
 
                 {{ form['staff_scale_' ~ question[1]] (class="radio_button", readonly=True) }}
 
-            <p> Comment</p>
+               <p> Comment</p>
 
                 {{ form['staff_comment_' ~ question[1]] (readonly=True) }}
             

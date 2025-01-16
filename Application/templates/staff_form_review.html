@@ -4,11 +4,9 @@
 {% endblock %}
 
 {% block content %}
-<form method="POST" action="{{ url_for('main.review_form', staff_id=staff_member.user_id) }}">
-    {{ form.hidden_tag() }}
-    <div class="owner_title">
-        <p>This form was filled by {{staff_member.full_name}}</p>
-    </div>
+<form method="POST" action="{{ url_for('main.staff_form_review', staff_id=staff_member.user_id) }}">
+    
+
     {% set printed_titles = [] %}
     {% for question in question_data %}
         {% if question[0] not in printed_titles %}
@@ -31,17 +29,20 @@
                         <p>I evaluate myself to be {{response.response_rating}} at my perfomance</p>
             <p> Comment:</p>
                         <p>{{response.comment}}</p>
-                    {% endif %}
+                        {% endif %}
                 {% endfor %}
-            <p>Supervisor's evaluation:</p>
-                {{ form['admin_scale_' ~ question[1]] (class="radio_button") }}
-            <p> Comment:</p>
-                {{ form['admin_comment_' ~ question[1]] }}
+                    <p>Supervisor's evaluation:</p>
+                    {% for review in supervisor_response %}
+                        {% if review.question_id == question[1] %}
+                           <p>{{review.response_rating}}</p>
+                    <p> Comment:</p>
+                           <p>{{review.comment}}</p>
+                        {% endif %}
+                    {% endfor %}
             {% endif %}
-        </div>
+                </div>
     {% endfor %}
-
-    {{ form.submit (class="button") }}
     <a href = "{{ url_for( 'main.home_return') }}"><button type="button">Back</button></a>
 </form>
 {% endblock content %}
+

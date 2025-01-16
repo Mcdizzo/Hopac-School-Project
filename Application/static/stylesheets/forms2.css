@@ -113,3 +113,24 @@ a button:active{
 a{
     text-decoration: none;
 }
+
+#massage{
+    border: 2px outset rgb(245, 245, 245, 0.8);
+    border-radius: 70px;
+    position: relative;
+    color: white;
+    top: 150px;
+    background:  rgb(23, 100, 233);
+    font-weight: bold;
+    font-size: 22px;
+    padding: 5px;
+    opacity: 1;
+    animation: fadeOut 3.5s forwards;
+    animation-delay: 3s;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}

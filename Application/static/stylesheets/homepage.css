@@ -143,12 +143,15 @@ button:active{
     border-radius: 0 0 30px 30px;
     background: opacity(0.6);
     position: absolute;
+    display: grid;
     width: 768px;
     max-width: 100%;
     min-height: 420px;
     background: lightskyblue;
-    overflow: hidden;
+    overflow-y: auto;
     transition: transform 0.6s ease-in;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 5px;
 }
 .evaluation_form div{
     margin-bottom: 15px;
@@ -162,7 +165,9 @@ button:active{
 }
 
 .in_descriptions{
-    margin: 0 0 0 10px;
+    position: relative;
+    justify-items: center;
+    margin: 0 0 0 0px;
     border: none;
    
 }
@@ -175,13 +180,17 @@ button:active{
     border-radius: 0 0 30px 30px;
     background: opacity(0.6);
     position: absolute;
+    display: grid;
     width: 768px;
     max-width: 100%;
     min-height: 420px;
     background: lightsteelblue;
-    overflow: hidden;
+    overflow-y: auto;
     transition: transform 0.6s ease-in;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 5px;
 }
+
 .questions, .add_new_admin {
     padding: 0;
     margin-top: 60px;

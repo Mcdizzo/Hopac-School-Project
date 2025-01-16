@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/forms2.css')}}">
+<style>
+.question_set{
+    justify-items: center;
+    margin: 0 0 10px 0;
+    padding: 10px;
+}
+
+</style>
+{% endblock %}
+{% block content %}
+<form method="POST" action= "{{ url_for( 'main.add_admin') }}" >
+
+
+   <h1> Manage Database </h1>
+
+   
+    <div class="question_set">
+        <h2 style = "font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Create Database</h2>
+        <a href = "{{ url_for( 'main.create_database') }}"><button type="button" style = "float:none;" >Create</button></a>
+    </div>
+    <div class="question_set">
+        <h2 style = "font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Switch Database</h2>
+        <a href = "{{ url_for( 'main.switch_database') }}"><button type="button" style = "float:none;" >Switch</button></a>
+    </div>
+    <br>
+    <a href = "{{ url_for( 'main.home_return') }}"><button type="button" >Back</button></a>
+</form>
+
+
+<div id="massage"> 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="flash-messages">
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+    </div>
+    
+{% endblock content %}

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FieldList, FormField, SelectField, FileField,TextAreaField
-from wtforms.validators import DataRequired, Email
+from wtforms import StringField, PasswordField, SubmitField, FieldList, FormField, SelectField, FileField,TextAreaField, SelectMultipleField, IntegerField
+from wtforms.validators import DataRequired, Email, InputRequired, NumberRange
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 #class LoginForm(FlaskForm):
@@ -10,7 +10,6 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 class SignupForm(FlaskForm):
     full_name = StringField('Fullname', validators=[DataRequired()])
-    id = StringField('User ID', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     user_type = SelectField('User type', choices=[('','User-type'), ('Supervisor', 'Supervisor'), ('Staff', 'Staff')])
     spv_position = SelectField('User type', choices=[('Operational Manager', 'Operational Manager'), ('Principal', 'Principal'), ('Director','Director')])
@@ -21,6 +20,7 @@ class SignupForm(FlaskForm):
     period = StringField('Review Period', validators=[DataRequired()])
     contact = StringField('Contact', validators=[DataRequired()])
     picture = FileField('Upload Picture', validators=[FileRequired(), FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Images only!')])
+    passkey = StringField('Passkey(for supervisor use only)')
     submit = SubmitField('Sign up')
 
 class QuestionForm(FlaskForm):
@@ -50,3 +50,15 @@ class AddAdminForm(FlaskForm):
 
 class DynamicPreviewForm(FlaskForm):
     submit = SubmitField('Submit')
+
+
+
+class DatabaseForm(FlaskForm):
+    # Field for the year (integer)
+    year = IntegerField('Enter Year for New Database', validators=[InputRequired(), NumberRange(min=2025)])
+    
+    # Multiple selection field for tables (dynamic choice population)
+    tables_to_retain = SelectMultipleField('Select Tables to Retain Data', coerce=int)
+    
+    # Submit button
+    submit = SubmitField('Create Database')

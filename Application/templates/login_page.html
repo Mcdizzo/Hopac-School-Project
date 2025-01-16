@@ -4,15 +4,13 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="container" id="main">
     <div class="sign-up">
         <form id="firstForm" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <h1>Create Account</h1><br>
             {{form.full_name (placeholder="Fullname")}}
-            {{form.id (placeholder="Your ID")}}
-            {{form.email (placeholder="eg.msindato@hopac.sc.tz")}}
+            {{form.email (placeholder="eg.25msindato@hopac.sc.tz")}}
 
             <!-- <select id="title" name='user_type' onchange="changestatus()" class="jobtitle">-->
                 {{form.user_type (class_="jobtitle", id="title", onchange="changestatus()", placeholder="User-type")}}
@@ -25,11 +23,11 @@
     </div>
     <div class="sign-in">
         <form action="/login" method="POST">
-            <h1>Sign In</h1>
-            <input type="text" name='usrId' placeholder="1234" required="">
+            <h1>Log In</h1>
+            <input type="text" name='email' placeholder="eg.25msindato@hopac.sc.tz" required="">
             <input type="password" name='pswd' placeholder="password" required="">
             <a href="">forgot your password?</a>
-            <button type="submit">Sign In</button>
+            <button type="submit">Log In</button>
             <p id='message'></p>
             <p id='error-message'></p>
         </form>
@@ -59,22 +57,34 @@
     {{ form.password.label }}<i class="fa-solid fa-lock"></i>
     {{ form.password }}
 </div>
+
 <div class="inputbox">
     {{ form.period.label }}<i class="fa-solid fa-clock"></i>
     {{ form.period }}
 </div>
+
 <div class="inputbox">
     {{ form.re_pswd.label }}
     {{ form.re_pswd }}
 </div>
+
 <div class="inputbox">
     {{ form.picture.label }}
     {{ form.picture }}
 </div>
-    <div class="inputbox">
+
+<div class="inputbox">
    {{form.contact.label}}<i class="fa-solid fa-phone"></i>
     {{form.contact}}
 </div>
+
+<div class="inputbox">
+    {{ form.passkey.label }}
+    {{ form.passkey }}
+</div>
+
+
+
     <button  type="button" onclick="prevPage()">Back</button>
     <button type="submit" >Sign Up</button>
     </div>

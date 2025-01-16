@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/forms2.css') }}">
+<style>
+.question_set {
+    justify-items: center;
+    margin: 0 0 10px 0;
+    padding: 10px;
+}
+select {
+    height: auto;
+}
+.form-group select {
+    display: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Switch Database</h1>
+
+<!-- Form to select and switch databases -->
+<form method="POST" action="{{ url_for('main.switch_database') }}">
+    <div class="mb-3">
+        <label for="databaseName" class="form-label">Select Database</label>
+        <select class="form-select" id="databaseName" name="databaseName" required>
+            <option value="" disabled selected>Select a database...</option>
+            {% for db in available_databases %}
+                <option value="{{ db }}">{{ db }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>
+
+<!-- Display Flash Messages -->
+<div id="massage"> 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+            {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+
+{% endblock content %}
