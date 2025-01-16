@@ -8,7 +8,17 @@
 
    <h1> Manage Administrators </h1>
 
-   <div id="massage"> 
+   
+
+   {{ form.new_admin_email.label}}<br>
+   {{ form.new_admin_email }}<br>
+   <br>
+   {{ form.add_admin  (class="button")  }} <br>
+<br>
+    <a href = "{{ url_for( 'main.home_return') }}"><button type="button">Back</button></a>
+</form>
+
+<div id="massage"> 
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         <div id="flash-messages">
@@ -21,13 +31,5 @@
     {% endif %}
     {% endwith %}
     </div>
-
-   {{ form.new_admin_email.label}}<br>
-   {{ form.new_admin_email }}<br>
-   <br>
-   {{ form.add_admin  (class="button")  }} <br>
-<br>
-    <a href = "{{ url_for( 'main.home_return') }}"><button type="button">Back</button></a>
-</form>
 {% endblock content %}
 

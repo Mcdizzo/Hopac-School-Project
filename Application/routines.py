@@ -4,7 +4,9 @@ from flask_mail import Message
 from __init__ import mail
 import mysql.connector
 from mysql.connector import errorcode
+import mysql.connector
 import logging
+
 
 #function for serving static files- based on the specific file folder root level
 
@@ -68,3 +70,5 @@ def create_mysql_database(new_db_name):
     except mysql.connector.Error as err:
         logging.error(f"Error: {err}")
         raise Exception(f"Error creating database: {err}")
+
+

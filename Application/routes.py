@@ -14,164 +14,425 @@ import logging
 main = Blueprint('main', __name__)
 
 # Landing Page Route
+
 @main.route('/')
 def landing():
     form = SignupForm()
     return render_template('login_page.html', form=form)
 
-# Sign Up Route
+
+
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        try:
-            form = SignupForm()
-            file = form.picture.data
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        print('cowabanga')
+        form = SignupForm()
+        print(form.data)
 
-            if not os.path.exists(current_app.config['UPLOAD_FOLDER']):
+        # for the uploaded picture
+        file = form.picture.data
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+
+        if not os.path.exists(current_app.config['UPLOAD_FOLDER']):
                 os.makedirs(current_app.config['UPLOAD_FOLDER'])
 
-            file.save(file_path)
-            
-            # Convert file content to binary
-            with open(file_path, 'rb') as f:
-                picture_data = f.read()
+        file.save(file_path)
+        
+        # Convert file content to binary
+        with open(file_path, 'rb') as f:
+            picture_data = f.read()
 
-            new_user = users(
-                full_name= form.full_name.data,
-                password_hash= form.password.data,
-                user_type= form.user_type.data,
-                review_period= form.period.data,
-                Contact= form.contact.data,
-                email= form.email.data,
-                picture= picture_data
-            )
+        new_user = users(
+            full_name= form.full_name.data,
+            password_hash= form.password.data,
+            user_type= form.user_type.data,
+            review_period= form.period.data,
+            Contact= form.contact.data,
+            email= form.email.data,
+            picture= picture_data
+        )
 
-            new_user.set_password(form.password.data)
-            db.session.add(new_user)
-            db.session.commit()
+        new_user.set_password(form.password.data)
+        db.session.add(new_user)
+        db.session.commit()
 
-            # Check user type for additional info
-            if form.user_type.data == 'Supervisor':
-                if form.passkey.data != 'admin101':
-                    flash("Invalid passkey", 'error')
-                    return redirect(url_for('main.landing'))
+        if form.user_type.data == 'Supervisor':
+            if form.passkey.data == 'admin101':
+               new_job_position = form.spv_position.data
+               new_supervisor = supervisors(
+                supervisor_id = new_user.user_id,
+                job_position=new_job_position
+                )
+               db.session.add(new_supervisor)
+            else:
+                 return redirect(url_for('main.landing', message="Invalid passkey"))
+        elif form.user_type.data == 'Staff':
+            new_job_position = form.staff_job.data
+            new_staff = staff(
+                staff_id = new_user.user_id,
+                job_position=new_job_position
+                )
+            db.session.add(new_staff)
 
-                new_supervisor = supervisors(supervisor_id=new_user.user_id, job_position=form.spv_position.data)
-                db.session.add(new_supervisor)
-            elif form.user_type.data == 'Staff':
-                new_staff = staff(staff_id=new_user.user_id, job_position=form.staff_job.data)
-                db.session.add(new_staff)
+        db.session.commit()
+        return redirect(url_for('main.landing', message="Account created successfully! Login with your account"))
+    else:
+        return redirect(url_for('main.landing', message="could not create account try loggin in again"))
 
-            db.session.commit()
-            flash("Account created successfully! Login with your account", 'success')
-            return redirect(url_for('main.landing'))
 
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error: {str(e)}. Please try again.", 'error')
-            return redirect(url_for('main.landing'))
-    return redirect(url_for('main.landing', message="could not create account try logging in again"))
 
-# Login Route
 @main.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        try:
-            email = request.form['email']
-            password = request.form['pswd']
+        email = request.form['email']
+        password = request.form['pswd']
 
-            user = users.query.filter_by(email=email).first()
-            if user and user.check_password(password):
-                session['user_id'] = user.user_id
-                session['role'] = user.user_type
-                return redirect(url_for('main.homepage'))
-            else:
-                flash('Invalid ID or password', 'error')
-        except Exception as e:
-            flash(f"Login error: {str(e)}", 'error')
-    return render_template('login_page.html')
+        user = users.query.filter_by(email = email).first()
+        if user and user.check_password(password):
+            session['user_id'] = user.user_id
+            session['role'] = user.user_type
+            return redirect(url_for('main.homepage'))
+        else:
+           return redirect(url_for('main.landing', message="Wrong passwrord or ID"))
+    else:
+     return render_template('login_page.html')
 
-# Logout Route
+
+
 @main.route('/logout', methods=['POST', 'GET'])
 def logout():
     session.clear()
     return redirect(url_for('main.landing'))
 
-# Homepage Route
+
+
 @main.route('/homepage', methods=['POST', 'GET'])
 def homepage():
-    try:
-        user_id = session.get('user_id')
-        logged_in_user = users.query.get(user_id)
-        
-        if logged_in_user.user_type == 'Staff':
-            staff_user = staff.query.get(user_id)
-            jobtitle = staff_user.job_position
-        else:
-            supervisor_user = supervisors.query.get(user_id)
-            jobtitle = supervisor_user.job_position
+    user_id = session.get('user_id')
+    logged_in_user = users.query.get(user_id)
 
-        return render_template('homepage.html', user=logged_in_user, jobtitle=jobtitle)
+    print(logged_in_user)
+    
+    if logged_in_user.user_type == 'Staff':
+        staff_user = staff.query.get(user_id)
 
-    except Exception as e:
-        flash(f"Error loading homepage: {str(e)}", 'error')
-        return redirect(url_for('main.landing'))
+        jobtitle = staff_user.job_position
+    else:
+        supervisor_user = supervisors.query.get(user_id)
 
-# Add Question Route
+        jobtitle = supervisor_user.job_position
+
+    return render_template('homepage.html', user=logged_in_user, jobtitle=jobtitle)
+
+
+
 @main.route('/add_question', methods=['POST', 'GET'])
 def add_question():
     form = DynamicQuestionForm()
-    try:
-        if request.method == 'POST':
-            if form.add_question_set.data:
-                form.question_sets.append_entry()
+    if request.method == 'POST':
+        
+        if form.add_question_set.data:
+            form.question_sets.append_entry()
+            
+        
+        for set_form in form.question_sets:
+            if set_form.add_question.data:
+                set_form.questions.append_entry()
+                
+        
+        if form.submit.data:
 
             for set_form in form.question_sets:
-                if set_form.add_question.data:
-                    set_form.questions.append_entry()
+                question_title = set_form.question_title.data
+                for question_form in set_form.questions:
+                    question_text = question_form.question_text.data
+                    question_type = question_form.question_type.data
+                    
+                    
+                    new_question = questions(
+                        question_title=question_title,
+                        question_text=question_text,
+                        question_type=question_type
+                    )
+                    db.session.add(new_question)
+                    db.session.commit()
+            flash('Questions added successfully!', 'success')
+            return redirect(url_for('main.add_question'))
+   
+    userType = session.get('role')
+    if userType == 'Staff':
+       flash('You need to be an administrator to access this page')
+       return redirect(url_for('main.homepage'))
+    else:
+         return render_template('Question-setting.html', form=form)
 
-            if form.submit.data:
-                for set_form in form.question_sets:
-                    question_title = set_form.question_title.data
-                    for question_form in set_form.questions:
-                        question_text = question_form.question_text.data
-                        question_type = question_form.question_type.data
-                        
-                        new_question = questions(
-                            question_title=question_title,
-                            question_text=question_text,
-                            question_type=question_type
-                        )
-                        db.session.add(new_question)
+    
+
+
+
+
+@main.route('/form', methods=['POST', 'GET'])
+def questions_view():
+    question_data = (
+        db.session.query(
+            questions.question_title,
+            questions.question_id,
+            questions.question_text,
+            questions.question_type
+        )
+        .order_by(questions.question_id.asc())
+        .all()
+    )
+
+    print(question_data)
+    for question in question_data:
+        question_id = question[1]
+        if question[3] == 'text':
+            print("condition one is being executed")
+            setattr(DynamicStaffResponseForm, f'staff_response_{question_id}', TextAreaField('Staff Response', validators=[DataRequired()]))
+            #setattr(DynamicStaffResponseForm, f'admin_response_{question_id}', TextAreaField('Admin Response', validators=[DataRequired()]))
+        else:
+            print("condition two is being executed")
+            setattr(DynamicStaffResponseForm, f'staff_scale_{question_id}', RadioField('Staff Scale', choices=[('poor', '1'), ('fair', '2'), ('good', '3'), ('best', '4')], default=None))
+            #setattr(DynamicStaffResponseForm, f'admin_scale_{question_id}', RadioField('Admin Scale', choices=[('poor', '1'), ('fair', '2'), ('good', '3'), ('best', '4')], validators=[DataRequired()]))
+            setattr(DynamicStaffResponseForm, f'staff_comment_{question_id}', TextAreaField('Staff Comment', validators=[DataRequired()]))
+            #setattr(DynamicStaffResponseForm, f'admin_comment_{question_id}', TextAreaField('Admin Comment', validators=[DataRequired()]))
+
+    form = DynamicStaffResponseForm(request.form)
+
+    if request.method == 'POST':
+        user_id = session.get('user_id')
+    
+        if user_id:
+        # Query the database to get the user's email
+         user = users.query.filter_by(user_id=user_id).first()
+        if user:
+            email = user.email
+        else:
+            email = None
+            print('User not found.')
+
+        # the body of the email to be sent
+
+        #email_data = ' Thank you for submitting your respoonse you\'ll be notified when your supervisor reviews it'
+
+        for question in question_data:
+            question_id = question[1]
+            staff_response = request.form.get(f'staff_response_{question_id}')
+            #admin_response = request.form.get(f'admin_response_{question_id}')
+            staff_scale = request.form.get(f'staff_scale_{question_id}')
+            #admin_scale = request.form.get(f'admin_scale_{question_id}')
+            staff_comment = request.form.get(f'staff_comment_{question_id}')
+            #admin_comment = request.form.get(f'admin_comment_{question_id}')
+
+            if staff_response or staff_scale is not None:
+                new_staff_response = staff_responses(
+                    staff_id=user_id,
+                    question_id=question_id,
+                    response_text=staff_response,
+                    response_rating=staff_scale,
+                    comment = staff_comment
+                )
+                db.session.add(new_staff_response)
+
+            #if admin_comment or admin_scale is not None:
+             #   new_admin_response = supervisor_responses(
+              #      supervisor_id=user_id,
+               #     question_id=question_id,
+                #    comment = admin_comment,
+                 #   response_rating=admin_scale,
+                
+                #)
+                #db.session.add(new_admin_response)
+
+        db.session.commit()
+
+        # sending the email to show a preview of what the user has filled.
+
+        #send_form_email(email, email_data)
+
+        flash('Thank you for filling the form, it has been submitted successfully!!', 'success')
+        return redirect(url_for('main.homepage'))
+
+    return render_template('form.html', question_data=question_data, form=form)
+
+
+
+@main.route('/return_to_form')
+def form_return():
+    pass
+    #previous_form_data = 
+
+
+
+@main.route('/return_to_homepage')
+def home_return():
+    return redirect(url_for('main.homepage'))
+
+
+
+@main.route('/manage_admins', methods=['POST', 'GET'])
+def add_admin():
+    form = AddAdminForm()
+    if request.method == "POST":
+            new_admin_email = request.form.get('new_admin_email')
+
+            user = users.query.filter_by(email=new_admin_email ).first()
+            if form.add_admin.data:
+                print('cowabanga')
+                if user:
+                    if user.user_type == 'Staff':
+                        user.user_type = 'Supervisor'
+                        print('user_type has been changed')
+                        db.session.add(user)
                         db.session.commit()
+                        print('user_type has been changed')
 
-                flash('Questions added successfully!', 'success')
-                return redirect(url_for('main.add_question'))
+                        staff_member = staff.query.filter_by(staff_id=user.user_id ).first()
+                        if staff_member:
+                            db.session.delete(staff_member)
+                            db.session.commit()
+                            print('cowabanga')
+                        new_supervisor = supervisors(supervisor_id=user.user_id, job_position=staff_member.job_position)
+                        db.session.add(new_supervisor)
+                        db.session.commit()
+                    else:
+                        flash('User is not registred as a staff member')
+                else:
+                    flash('user is not found in database')
+            return redirect(url_for('main.add_admin'))      
+    else:
+     return render_template('manage_admins.html', form = form)
 
-        userType = session.get('role')
-        if userType == 'Staff':
-            flash('You need to be an administrator to access this page', 'error')
-            return redirect(url_for('main.homepage'))
-        return render_template('Question-setting.html', form=form)
 
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Error: {str(e)}. Please try again.", 'error')
-        return redirect(url_for('main.add_question'))
 
-# Review Form Route (for Staff to review supervisor responses)
+@main.route('/form_list_review', methods=['POST','GET'])
+def review_form_list():
+    if request.method == "GET":
+        id = session.get('user_id')
+        user = users.query.filter_by(user_id=id).first()
+        if user:
+            if user.user_type == "Supervisor":
+                supervisor = supervisors.query.filter_by(supervisor_id=id).first()
+                
+                position = supervisor.job_position
+
+                staffs = staff.query.all()
+                staff_user = users.query.filter_by(user_type = 'Staff').all()
+        else:
+            flash('User not found, try logging in again')
+
+    return render_template('form_review_list.html', position = position, staffs=staffs, staff_user=staff_user)
+
+@main.route('/form_review/<int:staff_id>', methods=['GET', 'POST'])
+def review_form(staff_id):
+    staff_member = users.query.get(staff_id)
+    staff_response = staff_responses.query.filter_by(staff_id=staff_id).all()
+    user_id = session.get('user_id')
+
+    question_data = (
+        db.session.query(
+            questions.question_title,
+            questions.question_id,
+            questions.question_text,
+            questions.question_type
+        )
+        .order_by(questions.question_id.asc())
+        .all()
+    )
+
+    print(question_data)
+    for question in question_data:
+        question_id = question[1]
+        if question[3] == 'text':
+            #setattr(DynamicResponseForm, f'staff_response_{question_id}', TextAreaField('Staff Response', validators=[DataRequired()]))
+            setattr(DynamicSupervisorResponseForm, f'admin_response_{question_id}', TextAreaField('Admin Response', validators=[DataRequired()]))
+        else:
+            #setattr(DynamicResponseForm, f'staff_scale_{question_id}', RadioField('Staff Scale', choices=[('poor', '1'), ('fair', '2'), ('good', '3'), ('best', '4')], validators=[DataRequired()]))
+            setattr(DynamicSupervisorResponseForm, f'admin_scale_{question_id}', RadioField('Admin Scale', choices=[('poor', '1'), ('fair', '2'), ('good', '3'), ('best', '4')], validators=[DataRequired()]))
+            #setattr(DynamicResponseForm, f'staff_response_{question_id}', TextAreaField('Staff Response', validators=[DataRequired()]))
+            setattr(DynamicSupervisorResponseForm, f'admin_comment_{question_id}', TextAreaField('Admin Comment', validators=[DataRequired()]))
+
+    form = DynamicSupervisorResponseForm(request.form)
+
+    if request.method == 'POST':
+
+        for question in question_data:
+            question_id = question[1]
+            #staff_response = request.form.get(f'staff_response_{question_id}')
+            #admin_response = request.form.get(f'admin_response_{question_id}')
+            #staff_scale = request.form.get(f'staff_scale_{question_id}')
+            admin_scale = request.form.get(f'admin_scale_{question_id}')
+            #staff_comment = request.form.get(f'staff_comment_{question_id}')
+            admin_comment = request.form.get(f'admin_comment_{question_id}')
+
+            if admin_comment or admin_scale is not None:
+                new_admin_response = supervisor_responses(
+                    supervisor_id=user_id,
+                    question_id=question_id,
+                    staff_id = staff_id,
+                    comment = admin_comment,
+                    response_rating=admin_scale,
+                )
+                db.session.add(new_admin_response)
+
+        db.session.commit()
+        flash('review submitted', 'success')
+
+        return redirect(url_for('main.review_form_list'))
+    else:
+        return render_template('review_form.html', form=form, staff_member=staff_member, staff_response=staff_response, question_data=question_data)
+
+
+@main.route('/preview', methods=['GET','POST'])
+def form_preview():
+
+    question_data = (
+        db.session.query(
+            questions.question_title,
+            questions.question_id,
+            questions.question_text,
+            questions.question_type
+        )
+        .order_by(questions.question_id.asc())
+        .all()
+    )
+
+    
+    for question in question_data:
+        question_id = question[1]
+        if question[3] == 'text':
+            setattr(DynamicPreviewForm, f'staff_response_{question_id}', TextAreaField('Staff Response', validators=[DataRequired()]))
+            #setattr(DynamicStaffResponseForm, f'admin_response_{question_id}', TextAreaField('Admin Response', validators=[DataRequired()]))
+        else:
+            setattr(DynamicPreviewForm, f'staff_scale_{question_id}', RadioField('Staff Scale', choices=[('poor', '1'), ('fair', '2'), ('good', '3'), ('best', '4')], validators=[DataRequired()]))
+            #setattr(DynamicStaffResponseForm, f'admin_scale_{question_id}', RadioField('Admin Scale', choices=[('poor', '1'), ('fair', '2'), ('good', '3'), ('best', '4')], validators=[DataRequired()]))
+            setattr(DynamicPreviewForm, f'staff_comment_{question_id}', TextAreaField('Staff Comment', validators=[DataRequired()]))
+            #setattr(DynamicStaffResponseForm, f'admin_comment_{question_id}', TextAreaField('Admin Comment', validators=[DataRequired()]))
+
+    form = DynamicPreviewForm(request.form)
+
+    return render_template('preview.html', question_data=question_data, form=form)
+
+   
+@main.route('/question_removed/<int:question_id>', methods=['GET','POST'])
+def remove_question(question_id):
+    id = question_id
+    data = questions.query.get(id)
+    if data:
+        db.session.delete(data)
+        db.session.commit()
+    return redirect(url_for('main.form_preview'))
+
+#this is the route for the staff to check the reviews from their supervisors.
 @main.route('/staff_form_review/<int:staff_id>', methods=['GET', 'POST'])
 def staff_form_review(staff_id):
-    try:
-        supervisor_response = supervisor_responses.query.filter_by(staff_id=staff_id).all()
-        if not supervisor_response:
-            flash("Sorry, your supervisor hasn't reviewed your form yet", 'warning')
-            return redirect(url_for('main.homepage'))
-
+    supervisor_response = supervisor_responses.query.filter_by(staff_id=staff_id).all()
+    if supervisor_response:
         staff_member = users.query.get(staff_id)
         staff_response = staff_responses.query.filter_by(staff_id=staff_id).all()
+        user_id = session.get('user_id')
 
         question_data = (
             db.session.query(
@@ -183,30 +444,12 @@ def staff_form_review(staff_id):
             .order_by(questions.question_id.asc())
             .all()
         )
-
-        return render_template('staff_form_review.html', supervisor_response=supervisor_response, staff_member=staff_member, staff_response=staff_response, question_data=question_data)
-    
-    except Exception as e:
-        flash(f"Error loading review: {str(e)}", 'error')
+    else:
+        flash ('Sorry your supervisor hasn\'t reviewed your form yet')
         return redirect(url_for('main.homepage'))
 
-# Remove Question Route
-@main.route('/question_removed/<int:question_id>', methods=['GET','POST'])
-def remove_question(question_id):
-    try:
-        question_to_remove = questions.query.get(question_id)
-        if question_to_remove:
-            db.session.delete(question_to_remove)
-            db.session.commit()
-            flash("Question removed successfully", 'success')
-        else:
-            flash("Question not found", 'warning')
-        return redirect(url_for('main.form_preview'))
+    return render_template('staff_form_review.html', supervisor_response = supervisor_response ,staff_member=staff_member, staff_response=staff_response, question_data=question_data)
 
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Error: {str(e)}. Could not remove the question", 'error')
-        return redirect(url_for('main.form_preview'))
 
 #managing the database
 @main.route('/manage_database', methods=['GET','POST'])
