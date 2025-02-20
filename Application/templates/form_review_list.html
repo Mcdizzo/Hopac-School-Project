@@ -9,7 +9,7 @@
     <tr>
         <th>ID</th>
         <th>Staff Name</th>
-        <th>Review Status</th>
+
     </tr>
     {% if position == "Operational Manager"%}
         {% for staff in staffs %}
@@ -18,7 +18,7 @@
     <tr>
         <td>{{ staff.staff_id }}</td>
         <td><a href="{{ url_for('main.review_form', staff_id=staff.staff_id) }}">{{ user.full_name}}</a></td>
-        <td> radio review</td>
+
     </tr>
              {% endif %}
          {% endfor %}   
@@ -31,7 +31,7 @@
     <tr>
         <td>{{ staff.staff_id }}</td>
         <td><a href="{{url_for('main.review_form', staff_id=staff.staff_id)}}">{{ user.full_name}}</a></td>
-        <td> radio review</td>
+       
     </tr>
              {% endif %}
          {% endfor %}   
@@ -44,7 +44,7 @@
     <tr>
         <td>{{ staff.staff_id }}</td>
         <td><a href="{{url_for('main.review_form', staff_id=staff.staff_id)}}">{{ user.full_name}}</a></td>
-        <td> radio review</td>
+
     </tr>
              {% endif %}
          {% endfor %}   
