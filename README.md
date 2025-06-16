@@ -1,2 +1,2 @@
-# P-1
+# Hopac School Project
 Trial school website development
